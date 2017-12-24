@@ -1,16 +1,19 @@
 
 CC=g++
 CPP_FLAGS=-std=c++11
-CURL_LIBS=-D_GLIBCXX_USE_CXX11_ABI=0 -lm -lcurl -lcurlpp 
+CURL_LIBS=-D_GLIBCXX_USE_CXX11_ABI=0 -lm -lcurl -lcurlpp
 
-pi_app: main.o httprequest_generator.o
+pi_app: httprequest_generator.o piman.o main.o
 	$(CC) $(CPP_FLAGS) $^ $(CURL_LIBS) -o $@
 
-main.o: main.cpp
-	$(CC) $(CPP_FLAGS) -c $<
+main.o: main.cpp httprequest_generator.hh
+	$(CC) $(CPP_FLAGS) -c main.cpp
 
-httprequest_generator.o: httprequest_generator.cpp httprequest_generator.hh 
-	$(CC) $(CPP_FLAGS) -c $< $(CURL_LIBS) 
+piman.o: piman.cpp piman.hh debug.hh
+	$(CC) $(CPP_FLAGS) -c piman.cpp $(CURL_LIBS)
+
+httprequest_generator.o: httprequest_generator.cpp httprequest_generator.hh debug.hh
+	$(CC) $(CPP_FLAGS) -c httprequest_generator.cpp $(CURL_LIBS)
 
 
 .PHONY: clean
