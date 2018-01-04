@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import junit.framework.Test;
 
-import bl173214m.m2m.etf.bg.ac.rs.whatsmytemp.utils.HTTPReqHelper;
+import bl173214m.m2m.etf.bg.ac.rs.whatsmytemp.utils.HTTPReqHelperTask;
 
 public class TempDisplay extends AppCompatActivity {
 
@@ -28,8 +28,9 @@ public class TempDisplay extends AppCompatActivity {
                     final TextView textBox = findViewById(R.id.msg);
                     if(textBox != null) {
                         Log.d(TAG, "clicked");
-                        HTTPReqHelper t = new HTTPReqHelper();
-                        t.execute();
+                        Log.d(TAG, "Starting the Network test.");
+                        TestNetworkHelper("http://192.168.1.100:3000/measurements", 8080);
+
                         textBox.setText("a");
 
                         Log.d(TAG, "done");
@@ -37,5 +38,27 @@ public class TempDisplay extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private Boolean TestNetworkHelper(String adr, int port) {
+
+        HTTPReqHelperTask t = new HTTPReqHelperTask(adr, port);
+        Object res = null;
+        try {
+            t.execute();
+            res = t.get();
+        }catch (Exception e) {
+            Log.e(TAG, "TestNetworkHelper: Something went wrong!");
+        }
+
+        if(res == null) {
+            Log.d(TAG, "TestNetworkHelper: Sorry man, couldn't do it.");
+            return false;
+        }
+        else {
+            Log.d(TAG, "TestNetworkHelper: SUCCESS! Here's the result:");
+            Log.d(TAG, (String)res);
+        }
+        return true;
     }
 }

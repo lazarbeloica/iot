@@ -3,7 +3,7 @@
 
 var express = require('express'),
 app = express(),
-port = process.env.PORT || 8080,
+port = process.env.PORT || 3000,
 mongoose = require('mongoose'),
 Task = require('./api/models/serverModel'), //created model loading here
 bodyParser = require('body-parser');
