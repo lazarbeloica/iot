@@ -29,7 +29,7 @@ public class TempDisplay extends AppCompatActivity {
                     if(textBox != null) {
                         Log.d(TAG, "clicked");
                         Log.d(TAG, "Starting the Network test.");
-                        TestNetworkHelper("http://192.168.1.100:3000/measurements", 8080);
+                        TestNetworkHelper("http://192.168.1.101:3000/measurements");
 
                         textBox.setText("a");
 
@@ -40,9 +40,9 @@ public class TempDisplay extends AppCompatActivity {
         }
     }
 
-    private Boolean TestNetworkHelper(String adr, int port) {
+    private Boolean TestNetworkHelper(String adr) {
 
-        HTTPReqHelperTask t = new HTTPReqHelperTask(adr, port);
+        HTTPReqHelperTask t = new HTTPReqHelperTask(adr);
         Object res = null;
         try {
             t.execute();
