@@ -7,6 +7,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import junit.framework.Test;
 
 import bl173214m.m2m.etf.bg.ac.rs.whatsmytemp.utils.HTTPReqHelperTask;
@@ -25,19 +29,26 @@ public class TempDisplay extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final TextView textBox = findViewById(R.id.msg);
-                    if(textBox != null) {
                         Log.d(TAG, "clicked");
                         Log.d(TAG, "Starting the Network test.");
-                        TestNetworkHelper("http://192.168.1.101:3000/measurements");
-
-                        textBox.setText("a");
-
+                       // TestNetworkHelper("http://192.168.1.101:3000/measurements");
+                        initGraph();
                         Log.d(TAG, "done");
-                    }
                 }
             });
         }
+    }
+
+    public void initGraph(){
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
     }
 
     private Boolean TestNetworkHelper(String adr) {
