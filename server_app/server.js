@@ -30,9 +30,6 @@ console.log(URI);
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-<<<<<<< HEAD
-mongoose.connect('mongodb://localhost/Tododb'); 
-=======
 mongoose.connect(URI);
 
 var db = mongoose.connection;
@@ -42,7 +39,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   console.log("Connection open!");
   });
->>>>>>> cb6e677... SERVER: Server can be deployed now
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

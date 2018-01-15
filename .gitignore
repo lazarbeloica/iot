@@ -1,0 +1,5 @@
+*.o
+.gitignore
+.vscode/*
+server_app/.openode
+server_app/node_modules/*

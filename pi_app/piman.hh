@@ -19,7 +19,8 @@ namespace piman {
 
 using namespace net;
 
-const std::string DEFAULT_URL = "http://localhost:3000/measurements";
+const std::string TEST_URL_LOCAL = "http://localhost:3000/measurements";
+const std::string DEFAULT_URL = "http://checkmytemp.fr.openode.io//measurements";
 const std::string DEVICE_ID = "devTest0";
 const uint32_t DEFAULT_TIMEOUT = 6000; //60s
 const int8_t MAX_BACKOFF_FACTOR = 8;
