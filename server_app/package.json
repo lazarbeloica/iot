@@ -2,7 +2,7 @@
   "name": "server_app",
   "version": "1.0.0",
   "description": "Server application for keeping track of information sent from pi_app",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \" No test specofoed\" && exit 1",
     "start": "nodemon server.js"
@@ -20,10 +20,11 @@
   "author": "Lazar Beloica",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.13.3"
+    "nodemon": "^1.14.7"
   },
   "dependencies": {
     "express": "^4.16.2",
-    "mongoose": "^4.13.7"
+    "mongodb": "^3.0.1",
+    "mongoose": "^4.13.8"
   }
 }
