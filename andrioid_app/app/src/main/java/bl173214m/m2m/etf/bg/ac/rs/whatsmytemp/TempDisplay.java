@@ -1,26 +1,46 @@
 package bl173214m.m2m.etf.bg.ac.rs.whatsmytemp;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import junit.framework.Test;
 
+import org.json.JSONArray;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import bl173214m.m2m.etf.bg.ac.rs.whatsmytemp.utils.GraphHelper;
 import bl173214m.m2m.etf.bg.ac.rs.whatsmytemp.utils.HTTPReqHelperTask;
 
 public class TempDisplay extends AppCompatActivity {
 
+    protected BarChart m_BarChart;
+    protected final String m_Address = "http://checkmytemp.fr.openode.io//measurements";
     public static final String TAG = "TempDisplay Activity:";
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
+    protected void onCreate() {
+
+        super.onCreate(null);
         Log.d(TAG,"onCreate started");
         setContentView(R.layout.activity_temp_display);
         System.out.print("Hello");
@@ -29,33 +49,64 @@ public class TempDisplay extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        Log.d(TAG, "clicked");
-                        Log.d(TAG, "Starting the Network test.");
-                       // TestNetworkHelper("http://192.168.1.101:3000/measurements");
-                        initGraph();
-                        Log.d(TAG, "done");
+                    Log.d(TAG, "clicked");
+                    Log.d(TAG, "Starting the Network test.");
+                    JSONArray array = getDataFromServer(m_Address);
+                    GraphHelper.TempGraphDataPoint[] data =
+                            GraphHelper.JSONToCoordinats(array, array.length());
+                    PlotGraph(data);
+                    Log.d(TAG, "done");
                 }
             });
         }
     }
 
-    public void initGraph(){
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
+    private JSONArray getDataFromServer(String adr) {
+        HTTPReqHelperTask t;
+        JSONArray res = null;
+        try {
+            t = new HTTPReqHelperTask(new URL(adr));
+            t.execute();
+            res = (JSONArray) t.get();
+        }catch (Exception e) {
+            Log.e(TAG, "TestNetworkHelper: Something went wrong!");
+            return  null;
+        }
+
+        if(res == null) {
+            Log.d(TAG, "TestNetworkHelper: Sorry man, couldn't do it.");
+            return null;
+        }
+        else {
+            Log.d(TAG, "TestNetworkHelper: SUCCESS! Here's the result:");
+            Log.d(TAG, ((JSONArray)res).toString());
+        }
+        return res;
     }
 
+    private void PlotGraph(GraphHelper.TempGraphDataPoint[] aCoordinates) {
+        GraphView graph = (GraphView) findViewById(R.id.chart);
+
+        List<BarEntry> entries = new ArrayList<BarEntry>();
+
+        for (GraphHelper.TempGraphDataPoint data: aCoordinates)
+            entries.add(new BarEntry(data.x.getTime(),(float) data.y));
+
+        BarDataSet dataSet = new BarDataSet(entries, "Label"); // add entries to dataset
+        dataSet.setColor(Color.parseColor("red"));
+
+        BarData lineData = new BarData(dataSet);
+        m_BarChart.setData(lineData);
+        m_BarChart.invalidate(); // refresh
+    }
+
+    /*
     private Boolean TestNetworkHelper(String adr) {
 
-        HTTPReqHelperTask t = new HTTPReqHelperTask(adr);
+        HTTPReqHelperTask t;
         Object res = null;
         try {
+            t = new HTTPReqHelperTask(new URL(adr));
             t.execute();
             res = t.get();
         }catch (Exception e) {
@@ -72,4 +123,5 @@ public class TempDisplay extends AppCompatActivity {
         }
         return true;
     }
+*/
 }

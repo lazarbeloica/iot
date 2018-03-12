@@ -19,7 +19,7 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.jjoe64.graphview.GraphView
+ <!--   <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="200dip"
         android:id="@+id/graph" />
@@ -30,5 +30,10 @@
         android:layout_height="60dp"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="244dp" />
+-->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </android.support.constraint.ConstraintLayout>

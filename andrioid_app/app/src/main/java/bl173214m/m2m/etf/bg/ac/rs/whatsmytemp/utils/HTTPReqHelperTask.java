@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -23,87 +22,103 @@ import java.net.URL;
 public class HTTPReqHelperTask extends AsyncTask {
 
     public static final String TAG = "HTTPReqHelper";
+    private final int defaultTimeout = 3000;
 
-    private String address = null;
+    private URL url = null;
+    private HttpURLConnection connection = null;
 
-    public HTTPReqHelperTask(String address) {
-        this.address = address;
+    private InputStream stream = null;
+
+    public HTTPReqHelperTask(URL url)
+    {
+        this.url = url;
     }
 
-    public Object doInBackground(Object [] params) {
-        URL url = null;
+    public HttpURLConnection getConnection()
+    {
+        return connection;
+    }
+
+    public void setConnection(HttpURLConnection connection)
+    {
+        this.connection = connection;
+    }
+
+    private void connectToServer() throws Exception
+    {
         URI uri = null;
-        InputStream stream = null;
-        HttpURLConnection connection = null;
-        String response = null;
-        JSONArray jArray = null;
 
-        //Connecting to the server
-        try {
-            url = new URL(address);
-            uri = URI.create(address);
+        Log.d(TAG, "Establishing connection...");
+        connection = (HttpURLConnection) url.openConnection();
 
-            Log.d(TAG, "Establishing connection...");
-            connection = (HttpURLConnection) url.openConnection();
-            Log.d(TAG, "setReadTimeout = 3000");
-            connection.setReadTimeout(3000);
-            Log.d(TAG, "setConnectTimeout = 3000");
-            connection.setConnectTimeout(3000);
-            Log.d(TAG, "Setting request method to GET");
-            connection.setRequestMethod("GET");
-            Log.d(TAG, "Setting doInput to true");
-            connection.setDoInput(true);
+        Log.d(TAG, "setReadTimeout = " + defaultTimeout);
+        connection.setReadTimeout(defaultTimeout);
+
+        Log.d(TAG, "setConnectTimeout = " + defaultTimeout);
+        connection.setConnectTimeout(defaultTimeout);
+
+        Log.d(TAG, "Setting request method to GET");
+        connection.setRequestMethod("GET");
+
+        Log.d(TAG, "Setting doInput to true");
+        connection.setDoInput(true);
 
 
-            Log.d(TAG, "Connecting...");
-            connection.connect();
-            Log.d(TAG, "Connected");
+        Log.d(TAG, "Connecting...");
+        connection.connect();
+        Log.d(TAG, "Connected");
 
-            int responseCode = connection.getResponseCode();
-            if(responseCode != HttpURLConnection.HTTP_OK){
-                Log.e(TAG, "ERROR: Got a bad HTTP code! Got: " + responseCode);
-                return null;
-            }
+        int responseCode = connection.getResponseCode();
+        if(responseCode != HttpURLConnection.HTTP_OK){
+            Log.e(TAG, "ERROR: Got a bad HTTP code! Got: " + responseCode);
+            throw new NoConnectionError("Couldnot establish the connection!");
+        }
+    }
 
-            Log.d(TAG, "Getting the input stream...");
-            stream = connection.getInputStream();
-            Log.d(TAG, "Got the stream!");
-
-            if(stream != null) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
-                StringBuilder sb = new StringBuilder();
-
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-
-                response = sb.toString();
-            }
-            else {
-                Log.e(TAG, "Could not create a stream!");
-                return null;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "An ERROR with the network occurred! Couldn't get the measurements.");
-            return null;
-        }finally {
-            if(stream != null){
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(connection != null){
-                Log.d(TAG, "Disconnecting...");
-                connection.disconnect();
+    private void disconnectFromServer()
+    {
+        if(stream != null){
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+        if(connection != null){
+            Log.d(TAG, "Disconnecting...");
+            connection.disconnect();
+        }
+        connection = null;
+        stream = null;
+    }
 
+    private String getData() throws Exception
+    {
+        Log.d(TAG, "Getting the input stream...");
+        stream = connection.getInputStream();
+        Log.d(TAG, "Got the stream!");
+
+        if(stream != null) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
+            StringBuilder sb = new StringBuilder();
+
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+
+            return sb.toString();
+        }
+        else {
+            Log.e(TAG, "Could not create a stream!");
+            throw new NoDataFromServerError("Couldnot establish the connection!");
+        }
+    }
+
+    private JSONArray parseResponse(String response)
+    {
         //Parsing the result
+        JSONArray jArray = null;
         if (response != null) {
             try {
                 Log.d(TAG, "Trying to parse the response...");
@@ -115,8 +130,22 @@ public class HTTPReqHelperTask extends AsyncTask {
                 return  null;
             }
         }
-
         return jArray ;
+    }
+
+    public Object doInBackground(Object [] params)
+    {
+        try {
+            connectToServer();
+            return parseResponse(getData());
+
+        } catch (Exception e) {
+            Log.e(TAG, "An ERROR with the network occurred! Couldn't get the measurements.");
+            e.printStackTrace();
+            return null;
+        }finally {
+            disconnectFromServer();
+        }
     }
 }
 
