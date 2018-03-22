@@ -1,0 +1,49 @@
+/*
+    .     - class
+    #     - id
+    [bla] - atribut
+    bla   - tag
+*/
+
+html {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    padding: 10;
+    margin: 10;
+
+    background-color: #1E1E1E;
+}
+
+header {
+    padding: 20;
+    margin: 20;
+    color: azure;
+    font-size: 200%
+}
+
+#buttons {
+    padding: 10px;
+    margin: 10px;
+}
+
+#graph_container {
+    position: relative;
+    padding: 10px;
+    margin: 10px;
+}
+
+#graph_placeholder,
+#curve_chart {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#graph_placeholder_txt{
+    padding: 10%;
+}

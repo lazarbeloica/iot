@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Lazar's room tmp</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src='http://code.jquery.com/jquery-1.11.0.min.js'></script>
+    <script src='https://www.gstatic.com/charts/loader.js'></script>
+</head>
+<body>
+    <header>
+        <center>
+            Lazar's room temperature
+        </center>
+    </header>
+
+    <center>
+        <div id="graph_container">
+            <div id="graph_placeholder">
+                <h3 id="graph_placeholder_txt">Please select a device to display measurements</h3>
+            </div>
+            <div id="curve_chart"></div>
+        </div>
+    </center>
+    <center>
+        <div id="buttons">
+            <select id="devicelist">
+                <option value="" selected>Please select a device</option>
+            </select>
+            <button id="selectdevice">
+                Get Statistics
+            </button>
+        </div>
+    </center>
+
+
+    <script src="setup.js"></script>
+</body>
+</html>
