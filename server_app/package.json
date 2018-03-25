@@ -4,7 +4,7 @@
   "description": "Server application for keeping track of information sent from pi_app",
   "main": "server.js",
   "scripts": {
-    "test": "echo \" No test specofoed\" && exit 1",
+    "test": "echo \" No test specified\" && exit 1",
     "start": "nodemon server.js"
   },
   "repository": {
@@ -23,7 +23,7 @@
     "nodemon": "^1.14.7"
   },
   "dependencies": {
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "jquery": "^3.2.1",
     "mongodb": "^3.0.1",
     "mongoose": "^4.13.8"

@@ -3,7 +3,7 @@
 
 var express = require('express'),
 app = express(),
-port = process.env.PORT || 3000,
+port = process.env.PORT || 80,
 mongoose = require('mongoose'),
 Task = require('./api/models/serverModel'), //created model loading here
 bodyParser = require('body-parser');
@@ -30,7 +30,7 @@ console.log(URI);
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb');
+mongoose.connect(URI);
 
 var db = mongoose.connection;
 
