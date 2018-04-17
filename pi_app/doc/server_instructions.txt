@@ -1,0 +1,20 @@
+Server cration
+
+1. nmp init
+2. touch server.js
+3. mkdir api/controllers api/models api/routes
+4. touch api/controllers/*Controller.js api/models/*Model.js api/routes/*Routes.js
+
+5. npm install --save-dev nodemon
+6. npm install express --save
+7. add to packet.json "start": "nodemon server.js"
+8. code the server
+9. npm run start
+
+10. npm install mongoose --save
+11. code the schema
+12. code the routes
+13. code the controlers
+
+14. mongod
+

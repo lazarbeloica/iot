@@ -1,0 +1,94 @@
+*****************************ONLINE******************************************
+https://stackoverflow.com/questions/10254910/bluetooth-in-c
+
+http://doc.qt.io/qt-5/qtbluetooth-module.html
+
+https://thepihut.com/blogs/raspberry-pi-tutorials/17841464-bluetooth-installing-and-using-bluetooth-on-the-raspberry-pi
+
+https://developer.android.com/guide/topics/connectivity/bluetooth.html#HDP
+
+https://askubuntu.com/questions/453605/ralink-rt-3290-bluetooth-problem-on-ubuntu-14-04
+*****************************************************************************
+
+************************LIBCURL***********************************************
+
+sudo apt install libcurl4-openssl-dev libcurlpp-dev
+
+http://www.curlpp.org/ - docs
+
+****************************MONGO DB******************************************
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+
+sudo service mongod start #start
+
+Verify that the mongod process has started successfully by checking the contents of the log file at /var/log/mongodb/mongod.log for a line reading
+
+[initandlisten] waiting for connections on port <port>
+
+
+
+***********************PI BLUETOOTH*********************************************
+
+sudo apt-get install bluez
+sudo apt-get install libbluetooth-dev
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
+
+int main(int argc, char **argv)
+{
+    inquiry_info *ii = NULL;
+    int max_rsp, num_rsp;
+    int dev_id, sock, len, flags;
+    int i;
+    char addr[19] = { 0 };
+    char name[248] = { 0 };
+
+    dev_id = hci_get_route(NULL);
+    sock = hci_open_dev( dev_id );
+    if (dev_id < 0 || sock < 0) {
+        perror("opening socket");
+        exit(1);
+    }
+
+    len  = 8;
+    max_rsp = 255;
+    flags = IREQ_CACHE_FLUSH;
+    ii = (inquiry_info*)malloc(max_rsp * sizeof(inquiry_info));
+
+    num_rsp = hci_inquiry(dev_id, len, max_rsp, NULL, &ii, flags);
+    if( num_rsp < 0 ) perror("hci_inquiry");
+
+    for (i = 0; i < num_rsp; i++) {
+        ba2str(&(ii+i)->bdaddr, addr);
+        memset(name, 0, sizeof(name));
+        if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name), 
+            name, 0) < 0)
+        strcpy(name, "[unknown]");
+        printf("%s  %s\n", addr, name);
+    }
+
+    free( ii );
+    close( sock );
+    return 0;
+}
+
+to compile it on linux, just do
+
+gcc -o simplescan simplescan.c -lbluetooth
+
+(https://people.csail.mit.edu/albert/bluez-intro/c404.html)
+
+service bluetooth start
+
+***********************************************************************************
+
+
+***************************ANDROID BLUETOOTH***************************************
+***********************************************************************************
+
