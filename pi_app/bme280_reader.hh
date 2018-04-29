@@ -34,15 +34,16 @@ private:
     unsigned char *m_digH;
 
     struct bme280_dev bme280_dev;
-
+    struct bme280_data data; 
 public:
+
     BME208Reader(std::string a_FileName, int a_SlaveAddr);
     ~BME208Reader() override;
 
     bool testConnection() const;
 
-    bool measure() const;
-    const int extractTemperature() const;
-    const int extractHumidity() const;
-    const int extractPresure() const;
+    bool measure();
+    int extractTemperature() const;
+    int extractHumidity() const;
+    int extractPresure() const;
 };

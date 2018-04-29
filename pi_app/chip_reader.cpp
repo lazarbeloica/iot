@@ -50,9 +50,6 @@ bool ChipReader::writeToAddr(const unsigned char* a_Adr, const unsigned char* a_
     unsigned char toWrite[a_Bytes + 1];
     toWrite[0] = *a_Adr;
     std::memcpy(&toWrite[1], a_Buffer, a_Bytes);
-    for(int i = 0; i < a_Bytes + 1; ++i){
-        LOG_DEBUG("%d. %u\n", i, toWrite[i]);
-    }
 
     if (!writeI2C(toWrite, ADR_LEN + 1)) {
         LOG_ERROR("Not able to write to the chip");

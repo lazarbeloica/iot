@@ -17,13 +17,14 @@ int main() {
     }
     LOG_DEBUG("Instance succesfully connected");
 
-//    LOG_DEBUG("Starting the connection test");
-//
-//    if(!reader->testConnection()) {
-//        LOG_DEBUG("No connection");
-//        return -2;
-//    }
-//    LOG_DEBUG("We have connection");
-//    reader->measure();
+    LOG_DEBUG("Starting the connection test");
+
+    if(!reader->testConnection()) {
+        LOG_DEBUG("No connection");
+        return -2;
+    }
+    LOG_DEBUG("We have connection");
+    reader->measure();
+    reader->extractTemperature();
     return 0;
 }
