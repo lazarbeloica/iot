@@ -24,7 +24,9 @@ int main() {
         return -2;
     }
     LOG_DEBUG("We have connection");
-    reader->measure();
-    reader->extractTemperature();
+    while (true) {
+        reader->measure();
+        reader->extractTemperature();
+    }
     return 0;
 }

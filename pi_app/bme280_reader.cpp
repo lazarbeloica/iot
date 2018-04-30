@@ -53,12 +53,12 @@ int8_t user_i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16
         return -1;
     }
     if(::g_BME280Reader->readFromAddr(&reg_addr, reg_data, len)) {
-        LOG_DEBUG("=======================");
-        LOG_DEBUG("Writing %d bytes to %02x", len, reg_addr);
-        for (int i = 0; i < len; ++i) {
-            LOG_DEBUG("%2x", reg_data[i]);
-        }
-        LOG_DEBUG("=======================");
+//        LOG_DEBUG("=======================");
+//        LOG_DEBUG("Writing %d bytes to %02x", len, reg_addr);
+//        for (int i = 0; i < len; ++i) {
+//            LOG_DEBUG("%2x", reg_data[i]);
+//        }
+//        LOG_DEBUG("=======================");
         return 0;
     }
     LOG_ERROR("Couuld not read!");
@@ -88,18 +88,20 @@ int8_t user_i2c_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint1
         return -1;
     }
     if(::g_BME280Reader->writeToAddr(&reg_addr, reg_data, len)) {
-        LOG_DEBUG("=======================");
-        LOG_DEBUG("Writing %d bytes to %02x", len, reg_addr);
-        for (int i = 0; i < len; ++i) {
-            LOG_DEBUG("%2x", reg_data[i]);
-        }
-        LOG_DEBUG("=======================");
+//        LOG_DEBUG("=======================");
+//        LOG_DEBUG("Writing %d bytes to %02x", len, reg_addr);
+//        for (int i = 0; i < len; ++i) {
+//            LOG_DEBUG("%2x", reg_data[i]);
+//        }
+//        LOG_DEBUG("=======================");
         return 0;
     }
     LOG_ERROR("Couuld not read!");
     return -1;
 }
 
+//TODO: Check word length on the raspberry pi
+//TODO: Decide wether to use a flotingpoint or not
 
 BME208Reader::BME208Reader(std::string a_FileName, int a_SlaveAddr):ChipReader(a_FileName, a_SlaveAddr) {
 
@@ -111,12 +113,13 @@ BME208Reader::BME208Reader(std::string a_FileName, int a_SlaveAddr):ChipReader(a
     bme280_dev.read = user_i2c_read;
     bme280_dev.write = user_i2c_write;
     bme280_dev.delay_ms = delay;
+
     bme280_settings settings;
-    settings.osr_p = 0;
-    settings.osr_t = 0;
-    settings.osr_h = 0;
-    settings.filter = 0;
-    settings.standby_time = 0;
+    settings.osr_p = BME280_OVERSAMPLING_1X;
+    settings.osr_t = BME280_OVERSAMPLING_1X;
+    settings.osr_h = BME280_OVERSAMPLING_1X;
+    settings.filter = BME280_FILTER_COEFF_OFF;
+    settings.standby_time = BME280_STANDBY_TIME_1_MS;
     bme280_dev.settings = settings;
 
     if(res = bme280_init(&bme280_dev)) {
@@ -129,12 +132,6 @@ BME208Reader::BME208Reader(std::string a_FileName, int a_SlaveAddr):ChipReader(a
         throw std::runtime_error("Could not write to make soft reset!");
     }
     LOG_DEBUG("Reset done!");
-
-    if(res = bme280_set_regs(&config_adr, &CONFIG, 1, &bme280_dev)) {
-        LOG_ERROR("Could not write to config reg! code: %u", res);
-        throw std::runtime_error("Could not write to config reg!");
-    }
-    LOG_DEBUG("Configured reg!");
 }
 
 BME208Reader::~BME208Reader() {
@@ -159,51 +156,24 @@ bool BME208Reader::testConnection() const {
 bool BME208Reader::measure() {
 
     int res;
-    res = bme280_set_sensor_settings(BME280_ALL_SETTINGS_SEL, &bme280_dev);
+    res = bme280_set_sensor_settings( BME280_OSR_PRESS_SEL
+                                    | BME280_OSR_TEMP_SEL
+                                    | BME280_OSR_HUM_SEL, &bme280_dev);
+
     if (res) {
         LOG_ERROR("Could not write to ctrl reg! err_code: %d", res);
         return false;
     }
+
     res = bme280_set_sensor_mode(BME280_FORCED_MODE, &bme280_dev);
     if (res) {
         LOG_ERROR("Could not write to mode reg! err_code = %d", res);
         return false;
     }
 
-//    if (!writeToAddr(&ctrl_hum_adr ,&CTRL_HUM)) {
-//        LOG_ERROR("Could not write to ctrl_hum reg!");
-//        return false;
-//    }
-//
-//    if (!writeToAddr(&ctrl_hum_adr ,&CTRL_HUM)) {
-//        LOG_ERROR("Could not write to ctrl_hum reg!");
-//        return false;
-//    }
-//
-//    if (!writeToAddr(&ctrl_meas_adr ,&CTRL_MEAS)) {
-//        LOG_ERROR("Could not write to ctrl_meas reg!");
-//        return false;
-//    }
-//
-    LOG_DEBUG("Configured the measurement");
+    bme280_dev.delay_ms(40);
 
-//    unsigned char status;
-//    do {
-//        if (!readFromAddr(&status_adr, &status)) {
-//            LOG_ERROR("Could not read the status!");
-//            return false;
-//        }
-//        LOG_DEBUG("The status is %u", status);
-//    } while(status != STATUS_OK);
-
-//    if (!readFromAddr(&data_start_adr, m_readData, DATA_BYTES_LEN)) {
-//        LOG_ERROR("Could not read the measured data!");
-//        return false;
-//    }
-//
-//    for(int i = 0; i < 8; printf("%d. %u\n", i, m_readData[i++]));
-
-    if (bme280_get_sensor_data(BME280_ALL, &data, &bme280_dev)) {
+    if (bme280_get_sensor_data(BME280_ALL, &rawData, &bme280_dev)) {
         LOG_ERROR("Could not get the data!");
         return false;
     }
@@ -212,7 +182,11 @@ bool BME208Reader::measure() {
 }
 
 int BME208Reader::extractTemperature() const {
-    printf("%ld, %ld, %ld\n", data.temperature, data.pressure, data.humidity);
+#ifdef BME280_FLOAT_ENABLE
+    printf("%0.2f, %0.2f, %0.2f\n", rawData.temperature, rawData.pressure, rawData.humidity);
+#else
+    printf("%ld, %ld, %ld\n", rawData.temperature, rawData.pressure, rawData.humidity);
+#endif
     return 0;
 }
 

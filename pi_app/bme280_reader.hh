@@ -34,7 +34,7 @@ private:
     unsigned char *m_digH;
 
     struct bme280_dev bme280_dev;
-    struct bme280_data data; 
+    struct bme280_data rawData;
 public:
 
     BME208Reader(std::string a_FileName, int a_SlaveAddr);
