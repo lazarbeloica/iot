@@ -8,7 +8,7 @@
 #include <thread>
 
 namespace chip_driver {
-class BME208Reader: public ChipReader
+class BME280Reader: public ChipReader
 {
 private:
     const unsigned char id_reg_adr = 0xD0;
@@ -38,8 +38,8 @@ private:
     struct bme280_data rawData;
 public:
 
-    BME208Reader(std::string a_FileName, int a_SlaveAddr);
-    ~BME208Reader() override;
+    BME280Reader(std::string a_FileName, int a_SlaveAddr);
+    ~BME280Reader() override;
 
     bool testConnection() const;
 

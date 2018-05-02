@@ -13,10 +13,11 @@ using namespace std::placeholders;
 
 //used for an ugly workaround
 namespace {
-    static chip_driver::BME208Reader *g_BME280Reader = nullptr;
+    static chip_driver::BME280Reader *g_BME280Reader = nullptr;
 }
 
-using namespace chip_driver;
+namespace chip_driver {
+
 /*
 *
 * \brief Function needed in order to use the Bosch API and I2C
@@ -95,7 +96,7 @@ int8_t user_i2c_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint1
 //TODO: Check word length on the raspberry pi
 //TODO: Decide wether to use a flotingpoint or not
 
-BME208Reader::BME208Reader(std::string a_FileName, int a_SlaveAddr):ChipReader(a_FileName, a_SlaveAddr) {
+BME280Reader::BME280Reader(std::string a_FileName, int a_SlaveAddr):ChipReader(a_FileName, a_SlaveAddr) {
 
     uint8_t res;
 
@@ -132,11 +133,11 @@ BME208Reader::BME208Reader(std::string a_FileName, int a_SlaveAddr):ChipReader(a
     }
 }
 
-BME208Reader::~BME208Reader() {
+BME280Reader::~BME280Reader() {
     delete m_readData;
 }
 
-bool BME208Reader::testConnection() const {
+bool BME280Reader::testConnection() const {
     unsigned char id = 0;
     if(!readFromAddr(&id_reg_adr, &id)) {
         LOG_ERROR("Not able to read form the chip");
@@ -150,7 +151,7 @@ bool BME208Reader::testConnection() const {
 	return true;
 }
 
-bool BME208Reader::measure() {
+bool BME280Reader::measure() {
 
     if (bme280_set_sensor_mode(BME280_FORCED_MODE, &bme280_dev)) {
         LOG_ERROR("Couldn't set sensor operation mode!");
@@ -166,17 +167,18 @@ bool BME208Reader::measure() {
     return true;
 }
 
-double BME208Reader::extractTemperature() const {
+double BME280Reader::extractTemperature() const {
     // unit are degerees C
     return rawData.temperature / 100.0;
 }
 
-double BME208Reader::extractHumidity() const {
+double BME280Reader::extractHumidity() const {
     // unit are % of relative humidity
     return rawData.humidity / 1024.0;
 }
 
-double BME208Reader::extractPresure() const {
+double BME280Reader::extractPresure() const {
     // unit are Pa
     return rawData.pressure;
+}
 }

@@ -16,7 +16,7 @@ int main() {
 
     LOG_DEBUG("Creating an instance of bme280 reader");
     try {
-        reader = new BME208Reader("/dev/i2c-1", 0x76);
+        reader = new BME280Reader("/dev/i2c-1", 0x76);
     }catch (std::runtime_error e) {
         LOG_ERROR("Someting went wrong when creating an insrance");
         return -1;

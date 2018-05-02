@@ -1,16 +1,28 @@
 #include "piman.hh"
+#include "../chip_driver/chip_reader.hh"
+#include "../chip_driver/bme280_reader.hh"
 #include <thread>
 
 namespace piman{
 
 const int MAX_CHIP_ERRORS = 10;
+const std::string FILE_DESC = "/dev/i2c-1";
+const int DEFAULT_CHIP_ADDR = 0x76;
 
 Piman *Piman::m_Instance = nullptr;
 
 Piman *Piman::getInstance()
 {
     if (!m_Instance) {
-        m_Instance = new (std::nothrow) Piman();
+        chip_driver::ChipReader *cr = nullptr;
+
+        try {
+            cr = new chip_driver::BME280Reader(FILE_DESC, DEFAULT_CHIP_ADDR);
+        }catch (std::runtime_error error) {
+            LOG_WARNING("No chip reader will be attached to Piman!");
+        }
+
+        m_Instance = new (std::nothrow) Piman(cr);
         m_Instance->m_HttpReqGen = new HTTPRequestGenerator(piman::DEVICE_ID, piman::DEFAULT_URL);
     }
 
