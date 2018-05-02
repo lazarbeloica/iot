@@ -1,5 +1,7 @@
 #pragma once
 
+#include "debug.hh"
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -7,7 +9,8 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include "debug.hh"
+
+namespace chip_driver {
 
 class ChipReader
 {
@@ -34,3 +37,4 @@ public:
     virtual double extractHumidity() const = 0;
     virtual double extractPresure() const = 0;
 };
+}

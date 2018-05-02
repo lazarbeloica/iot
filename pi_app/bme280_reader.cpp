@@ -1,8 +1,8 @@
 #include "bme280_reader.hh"
-#include <iostream>
 #include "chip_reader.hh"
 
-#include  <functional>
+#include <iostream>
+#include <functional>
 #include <chrono>
 #include <thread>
 #include <unistd.h>
@@ -11,8 +11,10 @@ using namespace std::placeholders;
 
 //used for an ugly workaround
 namespace {
-    static BME208Reader *g_BME280Reader = nullptr;
+    static chip_driver::BME208Reader *g_BME280Reader = nullptr;
 }
+
+namespace chip_driver {
 /*
 *
 * \brief Function needed in order to use the Bosch API and I2C
@@ -175,4 +177,5 @@ double BME208Reader::extractHumidity() const {
 double BME208Reader::extractPresure() const {
     // unit are Pa
     return rawData.pressure;
+}
 }

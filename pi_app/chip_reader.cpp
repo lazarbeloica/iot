@@ -1,6 +1,8 @@
 #include "chip_reader.hh"
 #include <stdexcept>
 
+namespace chip_driver {
+
 const int ChipReader::ADR_LEN = 1;
 
 bool ChipReader::writeI2C(const unsigned char* a_Buffer, const int a_Bytes) const {
@@ -93,4 +95,6 @@ ChipReader::ChipReader(std::string a_FileName, int a_SlaveAddr): m_SlaveAddr(a_S
 		LOG_ERROR("Failed to acquire bus access and/or talk to slave.\n");
 		throw std::runtime_error("Failed to acquire bus access and/or talk to slave. ioctrl error code: " + res);
 	}
+}
+
 }

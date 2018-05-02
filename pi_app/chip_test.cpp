@@ -1,10 +1,12 @@
+#include "debug.hh"
+#include "chip_reader.hh"
+#include "bme280_reader.hh"
 #include <iostream>
 #include <chrono>
 #include <thread>
 #include <unistd.h>
-#include "debug.hh"
-#include "chip_reader.hh"
-#include "bme280_reader.hh"
+
+using namespace chip_driver;
 
 int main() {
     ChipReader *reader = nullptr;

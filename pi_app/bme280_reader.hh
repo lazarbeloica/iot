@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 
+namespace chip_driver {
 class BME208Reader: public ChipReader
 {
 private:
@@ -47,3 +48,4 @@ public:
     double extractHumidity() const;
     double extractPresure() const;
 };
+}
