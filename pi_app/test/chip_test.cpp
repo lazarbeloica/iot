@@ -1,6 +1,7 @@
-#include "debug.hh"
-#include "chip_reader.hh"
-#include "bme280_reader.hh"
+#include "../debug.hh"
+#include "../chip_driver/chip_reader.hh"
+#include "../chip_driver/bme280_reader.hh"
+
 #include <iostream>
 #include <chrono>
 #include <thread>

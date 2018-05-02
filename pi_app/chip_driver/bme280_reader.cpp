@@ -1,5 +1,7 @@
 #include "bme280_reader.hh"
 #include "chip_reader.hh"
+#include "BME280_driver/bme280.h"
+#include "BME280_driver/bme280_defs.h"
 
 #include <iostream>
 #include <functional>
@@ -14,7 +16,7 @@ namespace {
     static chip_driver::BME208Reader *g_BME280Reader = nullptr;
 }
 
-namespace chip_driver {
+using namespace chip_driver;
 /*
 *
 * \brief Function needed in order to use the Bosch API and I2C
@@ -177,5 +179,4 @@ double BME208Reader::extractHumidity() const {
 double BME208Reader::extractPresure() const {
     // unit are Pa
     return rawData.pressure;
-}
 }

@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include "debug.hh"
-#include "piman.hh"
+#include "manager/piman.hh"
 
 using namespace piman;
 

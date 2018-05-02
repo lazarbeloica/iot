@@ -7,8 +7,9 @@
  * Handels sending measured data to the server
 */
 
-#include "httprequest_generator.hh"
-#include "debug.hh"
+#include "../network/httprequest_generator.hh"
+#include "../debug.hh"
+
 #include <iostream>
 #include <stdint.h>
 #include <string>

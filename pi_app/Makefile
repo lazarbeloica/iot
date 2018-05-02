@@ -3,29 +3,29 @@ CC=g++
 CPP_FLAGS=-std=c++11 -g
 CURL_LIBS=-D_GLIBCXX_USE_CXX11_ABI=0 -lm -lcurl -lcurlpp
 
-pi_app: httprequest_generator.o piman.o main.o bme280_reader.o chip_reader.o
+pi_app: httprequest_generator.o piman.o main.o
 	$(CC) $(CPP_FLAGS) $^ $(CURL_LIBS) -o $@
 
-chip_test: chip_reader.o bme280_reader.o chip_test.cpp bme280_driver.o
+chip_test: chip_reader.o bme280_reader.o test/chip_test.cpp bme280_driver.o
 	$(CC) $(CPP_FLAGS) $^ -o $@
 
-main.o: main.cpp httprequest_generator.hh
-	$(CC) $(CPP_FLAGS) -c main.cpp
+main.o: main.cpp network/httprequest_generator.hh
+	$(CC) $(CPP_FLAGS) -c main.cpp -o $@
 
-piman.o: piman.cpp piman.hh debug.hh
-	$(CC) $(CPP_FLAGS) -c piman.cpp $(CURL_LIBS)
+piman.o: manager/piman.cpp manager/piman.hh debug.hh
+	$(CC) $(CPP_FLAGS) -c manager/piman.cpp -o $@ $(CURL_LIBS)
 
-httprequest_generator.o: httprequest_generator.cpp httprequest_generator.hh debug.hh
-	$(CC) $(CPP_FLAGS) -c httprequest_generator.cpp $(CURL_LIBS)
+httprequest_generator.o: network/httprequest_generator.cpp network/httprequest_generator.hh debug.hh
+	$(CC) $(CPP_FLAGS) -c network/httprequest_generator.cpp -o $@ $(CURL_LIBS)
 
-bme280_reader.o: bme280_reader.cpp bme280_reader.hh chip_reader.o bme280_driver.o
-	$(CC) $(CPP_FLAGS) -c bme280_reader.cpp
+bme280_reader.o: chip_driver/bme280_reader.cpp chip_driver/bme280_reader.hh chip_reader.o bme280_driver.o
+	$(CC) $(CPP_FLAGS) -c chip_driver/bme280_reader.cpp -o $@
 
-bme280_driver.o: BME280_driver/bme280.c
-	$(CC) $(CPP_FLAGS) -c BME280_driver/bme280.c -o $@
+bme280_driver.o: chip_driver/BME280_driver/bme280.c
+	$(CC) $(CPP_FLAGS) -c chip_driver/BME280_driver/bme280.c -o $@
 
-chip_reader.o: chip_reader.cpp chip_reader.hh
-	$(CC) $(CPP_FLAGS) -c chip_reader.cpp
+chip_reader.o: chip_driver/chip_reader.cpp chip_driver/chip_reader.hh
+	$(CC) $(CPP_FLAGS) -c chip_driver/chip_reader.cpp -o $@
 
 .PHONY: clean
 .SILENT: clean
