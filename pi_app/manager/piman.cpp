@@ -1,6 +1,9 @@
 #include "piman.hh"
+#include <thread>
 
 namespace piman{
+
+const int MAX_CHIP_ERRORS = 10;
 
 Piman *Piman::m_Instance = nullptr;
 
@@ -12,6 +15,12 @@ Piman *Piman::getInstance()
     }
 
     return m_Instance;
+}
+
+Piman::~Piman()
+{
+    delete m_ChipReader;
+    delete m_HttpReqGen;
 }
 
 void Piman::setTimeout(const uint32_t& a_Count)
@@ -39,6 +48,17 @@ std::string Piman::getServerURL() const
 
     return "";
 }
+
+void Piman::setChipReader(chip_driver::ChipReader *a_ChipReader)
+{
+    m_ChipReader = a_ChipReader;
+}
+
+chip_driver::ChipReader* Piman::getChipReader() const
+{
+    return  m_ChipReader;
+}
+
 
 void Piman::calculateBackoff()
 {
@@ -73,15 +93,61 @@ void Piman::sendValueToServer(std::string a_Value)
 
 }
 
-void Piman::run()
+bool Piman::start()
+{
+    if(!m_HttpReqGen) {
+        LOG_ERROR("No request generator specified! Thread not started.");
+        return false;
+    }
+
+    if(!m_ChipReader) {
+        LOG_ERROR("No chip reader specified! Thread not started.");
+        return false;
+    }
+
+    m_Thread = std::thread(&Piman::body, this);
+    return true;
+}
+
+void Piman::body()
 {
     m_ThreadOn = true;
-    std::string test_value = "23.5";
+    int chipError = 0;
+
     while(m_ThreadOn) {
-        sendValueToServer(test_value);
+        if (m_ChipReader && m_HttpReqGen) {
+            if (m_ChipReader->measure()) {
+                std::string value = std::to_string(m_ChipReader->extractTemperature());
+                sendValueToServer(value);
+                chipError = 0;
+            }
+            else {
+                //chip error
+                chipError++;
+                if (chipError > MAX_CHIP_ERRORS) {
+                    shutdown();
+                }
+            }
+        }
         LOG_DEBUG("Piman: Going to sleep for %d ms.", calculateTimeout());
         std::this_thread::sleep_for(std::chrono::milliseconds(m_Timeout));
     }
+    LOG_DEBUG("Thread done");
+}
+
+void Piman::stop()
+{
+    m_ThreadOn = false;
+    m_Thread.join();
+}
+
+void Piman::shutdown()
+{
+    LOG_ERROR("FATAL: Couln't revover from error! Shutdown initated!");
+    m_Instance->stop();
+    delete m_Instance;
+    m_Instance = nullptr;
+    exit(1);
 }
 
 }

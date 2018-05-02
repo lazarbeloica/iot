@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     }
 
     LOG_DEBUG("main: Starting the process.");
-    piman->run();
+    piman->start();
     LOG_DEBUG("main: The process finished.");
 
 }
