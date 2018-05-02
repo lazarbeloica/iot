@@ -8,3 +8,4 @@ server_app/.firebaserc
 server_app/firebase.json
 server_app/package-lock.json
 server_app/public/
+pi_app/chip_test

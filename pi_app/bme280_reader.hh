@@ -43,7 +43,7 @@ public:
     bool testConnection() const;
 
     bool measure();
-    int extractTemperature() const;
-    int extractHumidity() const;
-    int extractPresure() const;
+    double extractTemperature() const;
+    double extractHumidity() const;
+    double extractPresure() const;
 };

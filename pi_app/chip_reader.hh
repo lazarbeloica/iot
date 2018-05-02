@@ -30,7 +30,7 @@ public:
 
     virtual bool testConnection() const = 0;
     virtual bool measure() = 0;
-    virtual int extractTemperature() const = 0;
-    virtual int extractHumidity() const = 0;
-    virtual int extractPresure() const = 0;
+    virtual double extractTemperature() const = 0;
+    virtual double extractHumidity() const = 0;
+    virtual double extractPresure() const = 0;
 };

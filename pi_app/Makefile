@@ -19,7 +19,7 @@ httprequest_generator.o: httprequest_generator.cpp httprequest_generator.hh debu
 	$(CC) $(CPP_FLAGS) -c httprequest_generator.cpp $(CURL_LIBS)
 
 bme280_reader.o: bme280_reader.cpp bme280_reader.hh chip_reader.o bme280_driver.o
-	$(CC) $(CPP_FLAGS) -c bme280_reader.cpp bme280_driver.o
+	$(CC) $(CPP_FLAGS) -c bme280_reader.cpp
 
 bme280_driver.o: BME280_driver/bme280.c
 	$(CC) $(CPP_FLAGS) -c BME280_driver/bme280.c -o $@

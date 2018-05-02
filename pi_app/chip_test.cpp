@@ -1,4 +1,7 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
+#include <unistd.h>
 #include "debug.hh"
 #include "chip_reader.hh"
 #include "bme280_reader.hh"
@@ -25,8 +28,11 @@ int main() {
     }
     LOG_DEBUG("We have connection");
     while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5*1000));
         reader->measure();
-        reader->extractTemperature();
+        LOG_DEBUG("Tmp: %f\nPress: %f\nHum: %f",reader->extractTemperature(),
+                                            reader->extractPresure(),
+                                            reader->extractHumidity());
     }
     return 0;
 }
