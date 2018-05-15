@@ -7,8 +7,10 @@
  * Handels sending measured data to the server
 */
 
-#include "httprequest_generator.hh"
-#include "debug.hh"
+#include "../network/httprequest_generator.hh"
+#include "../debug.hh"
+#include "../chip_driver/chip_reader.hh"
+
 #include <iostream>
 #include <stdint.h>
 #include <string>
@@ -34,7 +36,8 @@ public:
     void operator=(Piman const&) = delete;
 
     static Piman *getInstance();
-    void run();
+    bool start();
+    void stop();
 
     void setTimeout(const uint32_t& a_Count);
     uint32_t getTimeout();
@@ -42,24 +45,36 @@ public:
     void setServerURL(std::string a_Url);
     std::string getServerURL() const;
 
+    void setChipReader(chip_driver::ChipReader*);
+    chip_driver::ChipReader* getChipReader() const;
+
 private:
-    Piman():m_Timeout(DEFAULT_TIMEOUT),
+    Piman(chip_driver::ChipReader *a_ChipReader = nullptr) :
+            m_Timeout(DEFAULT_TIMEOUT),
             m_HttpReqGen(nullptr),
             m_BackoffFactor(START_BACKOFF_FACTOR),
-            m_ThreadOn(false)
+            m_ThreadOn(false),
+            m_ChipReader(a_ChipReader)
             {};
 
+    ~Piman();
+
+    void body();
     void sendValueToServer(std::string a_Value);
     void calculateBackoff();
     void resetBackoff();
+    static void shutdown();
 
     uint32_t calculateTimeout();
     int8_t m_BackoffFactor;
     bool m_ThreadOn;
+    std::thread m_Thread;
+    uint32_t m_Timeout;
+
+    HTTPRequestGenerator *m_HttpReqGen;
+    chip_driver::ChipReader *m_ChipReader;
 
     static Piman *m_Instance;
-    uint32_t m_Timeout;
-    HTTPRequestGenerator *m_HttpReqGen;
 };
 
 }

@@ -23,7 +23,7 @@
 #define BOLD(x) "\x1B[1m" x RST
 #define UNDL(x) "\x1B[4m" x RST
 
-#define ENABLE_LOGGING 1
+#define ENABLE_LOGGING
 
 #ifdef ENABLE_LOGGING
 #define LOG_DEBUG(x, ...)   printf("%s %d:",__FILE__, __LINE__);\

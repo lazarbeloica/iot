@@ -2,11 +2,12 @@
 #ifndef _HTTPREQ_GEN_
 #define _HTTPREQ_GEN_
 
+#include "../debug.hh"
+
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 #include <iostream>
-#include "debug.hh"
 
 namespace net {
 using namespace curlpp::options;
