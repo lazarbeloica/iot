@@ -1,6 +1,10 @@
 
 CC=g++
 CPP_FLAGS=-std=c++11 -g
+#############################################################
+# NOTE: -D_GLIBCXX_USE_CXX11_ABI=0 needs to be removed when
+#		 		running this on a raspberry pi
+#############################################################
 LIBS=-D_GLIBCXX_USE_CXX11_ABI=0 -lm -lcurl -lcurlpp -lpthread
 
 pi_app: httprequest_generator.o chip_reader.o bme280_reader.o bme280_driver.o piman.o main.o

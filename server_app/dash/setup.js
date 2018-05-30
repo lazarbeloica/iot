@@ -1,6 +1,9 @@
 
 google.charts.load('current', { 'packages': ['corechart'] });
 
+const SERVER_URL = "http://checkmytemp.herokuapp.com/"
+const TEST_SERVER_URL = "http://localhost:3000"
+
 window.addEventListener("load", () => {
 
     var graph_container = document.getElementById("graph_container");
@@ -8,7 +11,7 @@ window.addEventListener("load", () => {
     graph_container.style.width = (screen.width * 0.9) + "px";
 
     var select = document.getElementById("devicelist");
-    var uri = "http://localhost:3000/devices";
+    var uri = SERVER_URL + "devices";
     $.ajax({
         url: uri,
         type: 'GET',
@@ -48,8 +51,8 @@ window.addEventListener("load", () => {
 (function () {
     var select = document.getElementById("devicelist");
     var button = document.getElementById("selectdevice");
-    //var URI = "http://checkmytemp.fr.openode.io/devsmeasurements";
-    var URI = 'http://localhost:3000/devsmeasurements/';
+    var URI = SERVER_URL + "devsmeasurements/";
+    //var URI = TEST_SERVER_URL + 'devsmeasurements/';
 
     button.addEventListener("click", () => {
         if (select.selectedIndex == 0)
