@@ -53,6 +53,10 @@ clean:
 run: pi_app
 	./pi_app
 
+.PHONY: install
+install: pi_app
+	cp scripts/piapponboot.sh /etc/init.d/	#requires super-user prem
+
 .PHONY: test
 test: chip_test
 	./chip_test

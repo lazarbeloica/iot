@@ -5,7 +5,6 @@
 
 #include <string>
 #include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string.hpp>
 
 namespace cmd_client {
 
@@ -17,6 +16,7 @@ public:
     void parseCmd(std::string);
     void help() const;
     void goToWork();
+    void goToWork(std::string a_Cmd);
 
 private:
     CmdClient(): m_Working(false) {}

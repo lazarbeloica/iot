@@ -8,6 +8,11 @@ CmdClient& CmdClient::getInstance() {
     return m_Instance;
 }
 
+void CmdClient::goToWork(std::string a_Cmd) {
+    parseCmd(a_Cmd);
+    goToWork();
+}
+
 void CmdClient::goToWork() {
     m_Working = true;
     std::string cmd;
