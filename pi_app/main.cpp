@@ -1,20 +1,14 @@
 
 #include <iostream>
 #include "debug.hh"
-#include "manager/piman.hh"
-
-using namespace piman;
+#include "cmd_client/cmd_client.hh"
 
 int main(int argc, char **argv) {
 
-    Piman *piman = Piman::getInstance();
-    if (!piman) {
-        std::cout << "main: Error: couldnot crete Pi Manager" << std::endl;
-        exit(1);
-    }
+    cmd_client::CmdClient cli = cmd_client::CmdClient::getInstance();
 
     LOG_DEBUG("main: Starting the process.");
-    piman->start();
+    cli.goToWork();
     LOG_DEBUG("main: The process finished.");
 
 }

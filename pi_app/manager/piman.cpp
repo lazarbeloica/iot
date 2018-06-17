@@ -3,36 +3,13 @@
 #include "../chip_driver/bme280_reader.hh"
 #include <thread>
 
-namespace piman{
+namespace piman {
 
 const int MAX_CHIP_ERRORS = 10;
-const std::string FILE_DESC = "/dev/i2c-1";
-const int DEFAULT_CHIP_ADDR = 0x76;
-
-Piman *Piman::m_Instance = nullptr;
-
-Piman *Piman::getInstance()
-{
-    if (!m_Instance) {
-        chip_driver::ChipReader *cr = nullptr;
-
-        try {
-            cr = new chip_driver::BME280Reader(FILE_DESC, DEFAULT_CHIP_ADDR);
-        }catch (std::runtime_error error) {
-            LOG_WARNING("No chip reader will be attached to Piman!");
-        }
-
-        m_Instance = new (std::nothrow) Piman(cr);
-        m_Instance->m_HttpReqGen = new HTTPRequestGenerator(piman::DEVICE_ID, piman::DEFAULT_URL);
-    }
-
-    return m_Instance;
-}
 
 Piman::~Piman()
 {
-    delete m_ChipReader;
-    delete m_HttpReqGen;
+    stop();
 }
 
 void Piman::setTimeout(const uint32_t& a_Count)
@@ -61,16 +38,15 @@ std::string Piman::getServerURL() const
     return "";
 }
 
-void Piman::setChipReader(chip_driver::ChipReader *a_ChipReader)
+void Piman::setChipReader(std::shared_ptr<chip_driver::ChipReader> a_ChipReader)
 {
     m_ChipReader = a_ChipReader;
 }
 
-chip_driver::ChipReader* Piman::getChipReader() const
+std::shared_ptr<chip_driver::ChipReader> Piman::getChipReader() const
 {
     return  m_ChipReader;
 }
-
 
 void Piman::calculateBackoff()
 {
@@ -156,10 +132,7 @@ void Piman::stop()
 void Piman::shutdown()
 {
     LOG_ERROR("FATAL: Couln't revover from error! Shutdown initated!");
-    m_Instance->stop();
-    delete m_Instance;
-    m_Instance = nullptr;
-    exit(1);
+    stop();
 }
 
-}
+} // namespace piman
