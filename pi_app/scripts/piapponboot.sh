@@ -1,14 +1,21 @@
-#!/bin/bash
+ #! /bin/sh
 
-PIAPP_PATH=~/pi_app/pi_app
-DEV_NAME=testDev3
-CHIP=bme280
+ ### BEGIN INIT INFO
+ # Provides:          noip
+ # Required-Start:    $remote_fs $syslog
+ # Required-Stop:     $remote_fs $syslog
+ # Default-Start:     2 3 4 5
+ # Default-Stop:      0 1 6
+ # Short-Description: Simple script to start a program at boot
+ ### END INIT INFO
 
-if [ ! -f ${PIAPP_PATH}} ]; then
-    echo "pi_app not found!"
-    exit 1
-fi
+ #change /direct/path/to/your/application to the path your application is in.
+ cd /home/pi/pi_app      # example cd /home/pi/myprogram/
 
-echo "Starting the pi_app"
-PIAPP_PATH start ${DEV_NAME} ${CHIP} &
-echo "pi_app started"
+ #change YourProgramExactName to Exact name of your program that you want to auto start
+ DEV_NAME=devTest6
+ CHIP_NAME=bme280
+
+ ./pi_app start ${DEV_NAME} ${CHIP_NAME} &> test-${DEV_NAME}_${CHIP_NAME}.log &
+
+ exit 0

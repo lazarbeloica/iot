@@ -30,7 +30,7 @@ console.log(URI);
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect(URI);
+mongoose.createConnection(URI);
 
 var db = mongoose.connection;
 

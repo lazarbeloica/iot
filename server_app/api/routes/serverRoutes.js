@@ -19,4 +19,7 @@ module.exports = function (app) {
 
   app.route('/devsmeasurements/:devId')
     .get(todoList.read_devices_measurements);
+
+//  app.route('/index')
+//    .get('dash/index.html');
 };

@@ -6,6 +6,9 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
+#include <chrono>
+#include <thread>
+
 namespace cmd_client {
 
 class CmdClient

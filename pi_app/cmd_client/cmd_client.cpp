@@ -1,6 +1,5 @@
 #include "cmd_client.hh"
 
-
 namespace cmd_client {
 
 CmdClient& CmdClient::getInstance() {
@@ -10,7 +9,7 @@ CmdClient& CmdClient::getInstance() {
 
 void CmdClient::goToWork(std::string a_Cmd) {
     parseCmd(a_Cmd);
-    goToWork();
+    std::cin.ignore();
 }
 
 void CmdClient::goToWork() {

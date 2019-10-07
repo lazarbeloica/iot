@@ -53,9 +53,17 @@ clean:
 run: pi_app
 	./pi_app
 
-.PHONY: install
-install: pi_app
-	cp scripts/piapponboot.sh /etc/init.d/	#requires super-user prem
+#.PHONY: install
+#install: pi_app
+#	sudo cp scripts/piapponboot.sh /etc/init.d/; \
+#	sudo chmod 755 /etc/init.d/piapponboot.sh; \
+#	sudo update-rc.d piapponboot.sh defaults
+#
+#.PHONY: uninstall
+#uninstall:
+#	sudo rm /etc/init.d/CCq &&\
+#	sudo update-rc.d -f piapponboot.sh remove
+#	make clean
 
 .PHONY: test
 test: chip_test
